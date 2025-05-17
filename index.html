@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validador de Cédulas</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 400px;
+      margin: 60px auto;
+      text-align: center;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 1em 0;
+      font-size: 1.2em;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1.1em;
+    }
+    .resultado {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Validar Cédula Dominicana</h1>
+  <input type="text" id="cedula" placeholder="Ej: 00112345678" />
+  <button onclick="validar()">Validar</button>
+  <div class="resultado" id="resultado"></div>
+
+  <script>
+    async function validar() {
+      const cedula = document.getElementById("cedula").value.trim();
+      const resultadoDiv = document.getElementById("resultado");
+
+      if (!cedula.match(/^\d{11}$/)) {
+        resultadoDiv.textContent = "Cédula inválida (debe tener 11 dígitos)";
+        return;
+      }
+
+      try {
+        const res = await fetch("https://us-central1-appweb-e0930.cloudfunctions.net/validarCedula?cedula=" + cedula);
+        const data = await res.json();
+
+        resultadoDiv.textContent = data.valida
+          ? "✅ La cédula es válida"
+          : "❌ La cédula NO es válida";
+      } catch (err) {
+        resultadoDiv.textContent = "Error al validar. Intenta de nuevo.";
+      }
+    }
+  </script>
+</body>
+</html>
